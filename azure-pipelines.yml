@@ -40,7 +40,7 @@ steps:
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)'
-    replaceExistingArchive: true
+    replaceExistingArchive: false
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
