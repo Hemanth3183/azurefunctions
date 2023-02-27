@@ -1,0 +1,67 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - develop
+  paths:
+   include:
+     - AxwayFileFactory
+
+pr: none
+
+name: $(Date:yyyyMMdd)$(Rev:.r)-$(SourceBranchName)
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+- name: tag
+  value: v$(Build.SourceBranchName).$(Build.BuildId)
+
+
+
+stages:
+  - stage: Build_and_Archive
+    displayName: Build 
+    
+    jobs:
+      - job: 
+        displayName: Build
+        steps:
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet_RESTORE
+            inputs:
+              command: 'restore'
+              projects: '**/*.csproj'
+              feedsToUse: 'select'
+              vstsFeed: '89fff867-895a-4840-86dd-a085d163ab9b/5534ebef-9b38-41cd-8e5d-6fc6d6e6f652'
+              includeNuGetOrg: true
+
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet_BUILD
+            inputs:
+              command: 'build'
+              projects: '**/*.csproj'
+              arguments: '--configuration Release'
+          - task: DotNetCoreCLI@2
+            displayName: Dotnet_PUBLISH
+            inputs:
+              command: 'publish'
+              publishWebProjects: false
+              projects: '**/*.csproj'
+              arguments: '--configuration Release --output publish_output'
+              zipAfterPublish: false
+              modifyOutputPath: false
+          - task: ArchiveFiles@2
+            displayName: Archive_to_ZIP
+            inputs:
+              rootFolderOrFile: 'publish_output'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/Sts.AxwayFileFactory-$(tag).zip'
+              replaceExistingArchive: true
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'AzureFunction-Deployment'
+              publishLocation: 'Container'
