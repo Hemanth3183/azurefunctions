@@ -39,7 +39,7 @@ steps:
     rootFolderOrFile: 'publish_output'
     includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/Functionapp1-$(tag).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)'
     replaceExistingArchive: true
 - task: PublishBuildArtifacts@1
   inputs:
