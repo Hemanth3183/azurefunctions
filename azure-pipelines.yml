@@ -36,7 +36,6 @@ steps:
 - task: ArchiveFiles@2
   displayName: Archive_to_ZIP
   inputs:
-    rootFolderOrFile: 'publish_output'
     includeRootFolder: false
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)'
